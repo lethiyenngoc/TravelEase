@@ -1,5 +1,12 @@
 const express = require('express')
 const path = require('path');
+const mongoose = require('mongoose');
+mongoose.connect('mongodb+srv://xuyen050519:FGc446Y2J9XReJHr@cluster0.22qm9.mongodb.net/tour-management');
+
+const Tour = mongoose.model('Tour', {
+  name: String,
+  vehicle: String
+});
 
 const app = express()
 const port = 3000
@@ -18,12 +25,18 @@ app.get('/', (req, res) => {
   })
 })
 
-app.get('/tours', (req, res) => {
+app.get('/tours', async (req, res) => {
+  const tourList = await Tour.find({});
+
+  console.log(tourList);
+
   res.render("client/pages/tour-list", {
-    pageTitle: "Danh sách tour"
+    pageTitle: "Danh sách tour",
+    tourList: tourList
   })
 })
 
 app.listen(port, () => {
   console.log(`Website đang chạy trên cổng ${port}`)
 })
+
