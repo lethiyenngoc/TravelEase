@@ -3,10 +3,7 @@ const path = require('path');
 const mongoose = require('mongoose');
 mongoose.connect('mongodb+srv://xuyen050519:FGc446Y2J9XReJHr@cluster0.22qm9.mongodb.net/tour-management');
 
-const Tour = mongoose.model('Tour', {
-  name: String,
-  vehicle: String
-});
+const Tour = require("./models/tour.model");
 
 const app = express()
 const port = 3000
