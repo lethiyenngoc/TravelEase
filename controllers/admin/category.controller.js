@@ -22,7 +22,8 @@ module.exports.list = async (req, res) => {
   
     req.body.createdBy = req.account.id;
     req.body.updatedBy = req.account.id;
-  
+    req.body.avatar = req.file ? req.file.path : "";
+    
     const newRecord = new Category(req.body);
     await newRecord.save();
   
