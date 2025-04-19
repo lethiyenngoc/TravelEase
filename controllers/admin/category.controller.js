@@ -129,4 +129,29 @@ module.exports.list = async (req, res) => {
         message: "Id không hợp lệ!"
       })
     }
+  }
+  
+  module.exports.deletePatch = async (req, res) => {
+    try {
+      const id = req.params.id;
+      
+      await Category.updateOne({
+        _id: id
+      }, {
+        deleted: true,
+        deletedBy: req.account.id,
+        deletedAt: Date.now()
+      })
+  
+      req.flash("success", "Xóa danh mục thành công!");
+  
+      res.json({
+        code: "success"
+      })
+    } catch (error) {
+      res.json({
+        code: "error",
+        message: "Id không hợp lệ!"
+      })
+    }
   }  
