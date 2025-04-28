@@ -235,4 +235,27 @@ module.exports.list = async (req, res) => {
         message: "Id không hợp lệ!"
       })
     }
+  } 
+
+  module.exports.undoPatch = async (req, res) => {
+    try {
+      const id = req.params.id;
+      
+      await Tour.updateOne({
+        _id: id
+      }, {
+        deleted: false
+      })
+  
+      req.flash("success", "Khôi phục tour thành công!");
+  
+      res.json({
+        code: "success"
+      })
+    } catch (error) {
+      res.json({
+        code: "error",
+        message: "Id không hợp lệ!"
+      })
+    }
   }  
