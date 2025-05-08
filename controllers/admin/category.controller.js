@@ -240,6 +240,14 @@ module.exports.list = async (req, res) => {
       switch (option) {
         case "active":
         case "inactive":
+          if(!req.permissions.includes("category-edit")) {
+            res.json({
+              code: "error",
+              message: "Không có quyền sử dụng tính năng này!"
+            })
+            return;
+          }
+          
           await Category.updateMany({
             _id: { $in: ids }
           }, {
@@ -248,6 +256,14 @@ module.exports.list = async (req, res) => {
           req.flash("success", "Đổi trạng thái thành công!");
           break;
         case "delete":
+          if(!req.permissions.includes("category-delete")) {
+            res.json({
+              code: "error",
+              message: "Không có quyền sử dụng tính năng này!"
+            })
+            return;
+          }
+
           await Category.updateMany({
             _id: { $in: ids }
           }, {
