@@ -70,11 +70,27 @@ module.exports.detail = async (req, res) => {
     })
     // Hết Thông tin chi tiết
 
+    // ===== Tour gợi ý (cùng danh mục, loại tour hiện tại) =====
+    const relatedTours = await Tour.find({
+      _id: { $ne: tourDetail._id },
+      category: tourDetail.category,
+      status: "active",
+      deleted: false
+    })
+      .sort({ position: "desc" })
+      .limit(4);
+
+    for (const item of relatedTours) {
+      item.departureDateFormat = moment(item.departureDate).format("DD/MM/YYYY");
+    }
+    // ===== Hết Tour gợi ý =====
+
     res.render("client/pages/tour-detail", {
       pageTitle: "Chi tiết tour",
       breadcrumb: breadcrumb,
       tourDetail: tourDetail,
-      cityList: cityList
+      cityList: cityList,
+      relatedTours: relatedTours
     })
   } else {
     res.redirect("/");

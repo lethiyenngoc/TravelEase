@@ -26,32 +26,123 @@ if(buttonMenuMobile) {
 }
 // End Menu Mobile
 
-// Box Address Section 1
+// Box Address Section 1 (Autocomplete + click chọn gợi ý)
 const boxAddressSection1 = document.querySelector(".section-1 .inner-form .inner-box.inner-address");
-if(boxAddressSection1) {
-  // Ẩn/hiện box suggest
+if (boxAddressSection1) {
   const input = boxAddressSection1.querySelector(".inner-input");
 
+  // list gợi ý (chỗ đang chứa .inner-item)
+  const suggestList = boxAddressSection1.querySelector(".inner-suggest-list");
+
+  // debounce để không gọi API liên tục
+  let timer = null;
+
+  const renderSuggest = (items) => {
+    if (!suggestList) return;
+
+    if (!items || items.length === 0) {
+      suggestList.innerHTML = `
+        <div class="inner-item" style="pointer-events:none; opacity:.7;">
+          <div class="inner-item-content">
+            <div class="inner-item-title">Không có gợi ý phù hợp</div>
+          </div>
+        </div>
+      `;
+      return;
+    }
+
+    suggestList.innerHTML = items.map(item => `
+      <div class="inner-item" data-value="${item.name}" data-slug="${item.slug}">
+        <div class="inner-item-image">
+          <img alt="${item.name}" src="${item.avatar || "/assets/images/product-1.jpg"}" />
+        </div>
+        <div class="inner-item-content">
+          <div class="inner-item-title">${item.name}</div>
+          <div class="inner-item-desc">Nhấn để chọn</div>
+        </div>
+      </div>
+    `).join("");
+  };
+
+  const fetchSuggest = async (keyword) => {
+    const res = await fetch(`/search/suggest?keyword=${encodeURIComponent(keyword)}`);
+    const data = await res.json();
+    if (data.code === "success") {
+      renderSuggest(data.data);
+    }
+  };
+
+  // Focus -> mở box
   input.addEventListener("focus", () => {
     boxAddressSection1.classList.add("active");
-  })
+  });
 
-  input.addEventListener("blur", () => {
-    boxAddressSection1.classList.remove("active");
-  })
+  // Click ra ngoài -> đóng box (thay cho blur)
+  document.addEventListener("click", (event) => {
+    if (!boxAddressSection1.contains(event.target)) {
+      boxAddressSection1.classList.remove("active");
+    }
+  });
 
-  // Sự kiện click vào từng item
-  const listItem = boxAddressSection1.querySelectorAll(".inner-suggest-list .inner-item");
-  listItem.forEach(item => {
-    item.addEventListener("mousedown", () => {
-      const title = item.querySelector(".inner-item-title").innerHTML.trim();
-      if(title) {
-        input.value = title;
+  // Gõ -> gọi API gợi ý
+  input.addEventListener("input", () => {
+    const keyword = input.value.trim();
+
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      if (keyword.length >= 1) {
+        boxAddressSection1.classList.add("active");
+        fetchSuggest(keyword);
+      } else {
+        // nếu rỗng thì bạn có thể giữ danh sách "Địa điểm hot" hoặc xoá
+        // renderSuggest([]);
+        // hoặc để nguyên data hot như ban đầu: không làm gì
       }
-    })
-  })
+    }, 250);
+  });
+
+  // Click item (event delegation) -> set input value
+  if (suggestList) {
+    suggestList.addEventListener("mousedown", (e) => {
+      const item = e.target.closest(".inner-item");
+      if (!item) return;
+
+      const value = item.getAttribute("data-value");
+      if (value) input.value = value;
+
+      // đóng box sau khi chọn
+      boxAddressSection1.classList.remove("active");
+    });
+  }
 }
 // End Box Address Section 1
+
+// // Box Address Section 1
+// const boxAddressSection1 = document.querySelector(".section-1 .inner-form .inner-box.inner-address");
+// if(boxAddressSection1) {
+//   // Ẩn/hiện box suggest
+//   const input = boxAddressSection1.querySelector(".inner-input");
+
+//   input.addEventListener("focus", () => {
+//     boxAddressSection1.classList.add("active");
+//   })
+
+//   input.addEventListener("blur", () => {
+//     boxAddressSection1.classList.remove("active");
+//   })
+
+//   // Sự kiện click vào từng item
+//   const listItem = boxAddressSection1.querySelectorAll(".inner-suggest-list .inner-item");
+//   listItem.forEach(item => {
+//     item.addEventListener("mousedown", () => {
+//       const title = item.querySelector(".inner-item-title").innerHTML.trim();
+//       if(title) {
+//         input.value = title;
+//       }
+//     })
+//   })
+// }
+// // End Box Address Section 1
 
 // Box User Section 1
 const boxUserSection1 = document.querySelector(".section-1 .inner-form .inner-box.inner-user");
@@ -830,3 +921,38 @@ if(pageCart) {
   drawCart();
 }
 // End Page Cart
+
+// Pagination Tour List
+const boxPagination = document.querySelector(".box-pagination");
+if (boxPagination) {
+  const url = new URL(window.location.href);
+
+  const goToPage = (page) => {
+    url.searchParams.set("page", page);
+    window.location.href = url.toString();
+  };
+
+  boxPagination.querySelectorAll("[pagination-page]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      goToPage(btn.value);
+    });
+  });
+
+  const prev = boxPagination.querySelector("[pagination-prev]");
+  const next = boxPagination.querySelector("[pagination-next]");
+
+  if (prev) {
+    prev.addEventListener("click", () => {
+      const current = parseInt(url.searchParams.get("page") || "1");
+      if (current > 1) goToPage(current - 1);
+    });
+  }
+
+  if (next) {
+    next.addEventListener("click", () => {
+      const current = parseInt(url.searchParams.get("page") || "1");
+      goToPage(current + 1);
+    });
+  }
+}
+// End Pagination Tour List

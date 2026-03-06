@@ -303,7 +303,7 @@ module.exports.paymentVNPay = async (req, res) => {
     let signData = querystring.stringify(vnp_Params, { encode: false });
     let crypto = require("crypto");     
     let hmac = crypto.createHmac("sha512", secretKey);
-    let signed = hmac.update(new Buffer(signData, 'utf-8')).digest("hex"); 
+    let signed = hmac.update(Buffer.from(signData, 'utf-8')).digest("hex"); 
     vnp_Params['vnp_SecureHash'] = signed;
     vnpUrl += '?' + querystring.stringify(vnp_Params, { encode: false });
 
@@ -329,7 +329,7 @@ module.exports.paymentVNPayResult = async (req, res) => {
   let signData = querystring.stringify(vnp_Params, { encode: false });
   let crypto = require("crypto");     
   let hmac = crypto.createHmac("sha512", secretKey);
-  let signed = hmac.update(new Buffer(signData, 'utf-8')).digest("hex");
+  let signed = hmac.update(Buffer.from(signData, 'utf-8')).digest("hex");
   
   if(secureHash === signed){
     if(vnp_Params["vnp_ResponseCode"] == "00" && vnp_Params["vnp_TransactionStatus"] == "00") {

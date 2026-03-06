@@ -1,0 +1,15 @@
+extends ../layouts/default.pug
+
+block main
+  .news-page
+    .container
+      h2.inner-title Tin tức du lịch
+
+      .news-list
+        each item in newsList
+          .news-item
+            img(src=item.image alt=item.title)
+            .news-content
+              h3= item.title
+              p.news-date= item.createdAt
+              p.news-desc= item.description

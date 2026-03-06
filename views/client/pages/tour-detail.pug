@@ -1,5 +1,6 @@
 extends ../layouts/default.pug
 include ../mixins/box-breadcrumb.pug
+include ../mixins/product-item.pug
 
 block main
   // Breadcrumb
@@ -140,3 +141,13 @@ block main
                 span đ
             button.inner-button-add-cart(tour-id=tourDetail.id) Thêm Vào Giỏ Hàng
   // End Section 10
+
+  // Section - Tour gợi ý
+  if relatedTours && relatedTours.length
+    .section-4(style="padding-top: 40px;")
+      .container
+        h2.box-title Tour gợi ý cho bạn
+        .inner-wrap
+          each item in relatedTours
+            +product-item(item)
+  // End Section

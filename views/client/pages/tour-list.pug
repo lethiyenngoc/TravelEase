@@ -103,14 +103,28 @@ block main
               +product-item(item)
               // End Product Item
           // Pagination
-          .box-pagination
-            button
-              i.fa-solid.fa-angles-left
-            button.active 1
-            button 2
-            button 3
-            button 4
-            button
-              i.fa-solid.fa-angles-right
+          //- .box-pagination
+            //- button
+            //-   i.fa-solid.fa-angles-left
+            //- button.active 1
+            //- button 2
+            //- button 3
+            //- button 4
+            //- button
+            //-   i.fa-solid.fa-angles-right
+
+          if pagination && pagination.totalPage > 1
+            .box-pagination
+              button(type="button" pagination-prev disabled=(pagination.currentPage == 1)) ‹
+
+              - for (let i = 1; i <= pagination.totalPage; i++)
+                button(
+                  type="button"
+                  pagination-page
+                  value=i
+                  class=(pagination.currentPage === i ? "active" : "")
+                ) #{i}
+
+              button(type="button" pagination-next disabled=(pagination.currentPage == pagination.totalPage)) ›
           // End Pagination
   // End Section 9

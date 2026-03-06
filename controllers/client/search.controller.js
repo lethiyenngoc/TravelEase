@@ -80,3 +80,33 @@ module.exports.list = async (req, res) => {
     tourList: tourList
   });
 }
+
+module.exports.suggest = async (req, res) => {
+  try {
+    const keyword = (req.query.keyword || "").trim();
+
+    if (!keyword) {
+      return res.json({ code: "success", data: [] });
+    }
+
+    const regex = new RegExp(keyword, "i");
+
+    const tours = await Tour.find({
+      status: "active",
+      deleted: false,
+      name: regex
+    })
+      .select("name slug avatar")
+      .limit(6);
+
+    return res.json({
+      code: "success",
+      data: tours
+    });
+  } catch (error) {
+    return res.json({
+      code: "error",
+      message: "Không thể lấy gợi ý tour"
+    });
+  }
+};

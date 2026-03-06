@@ -1,0 +1,43 @@
+extends ../layouts/default.pug
+
+block main
+  .container
+    h2.inner-title Liên hệ
+
+    .contact-info
+      if settingWebsiteInfo && settingWebsiteInfo.websiteName
+        p
+          strong Website:
+          |  #{settingWebsiteInfo.websiteName}
+
+      if settingWebsiteInfo && settingWebsiteInfo.phone
+        p
+          strong Hotline:
+          |  #{settingWebsiteInfo.phone}
+
+      if settingWebsiteInfo && settingWebsiteInfo.email
+        p
+          strong Email:
+          |  #{settingWebsiteInfo.email}
+
+      if settingWebsiteInfo && settingWebsiteInfo.address
+        p
+          strong Địa chỉ:
+          |  #{settingWebsiteInfo.address}
+
+    hr
+
+    // ===== 3. Thời gian làm việc =====
+    .working-time
+      h3 Thời gian làm việc
+      ul
+        li Thứ 2 – Thứ 6: 08:00 – 17:30
+        li Thứ 7: 08:00 – 12:00
+        li Chủ nhật & ngày lễ: Nghỉ
+
+    hr
+
+    // ===== 5. Slogan =====
+    .contact-slogan
+      p
+        em ✈️ TravelEase – Đồng hành cùng bạn trên mọi hành trình khám phá

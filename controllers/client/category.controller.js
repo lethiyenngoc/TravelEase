@@ -59,13 +59,30 @@ module.exports.list = async (req, res) => {
       status: "active"
     };
 
+    // Phân trang
+    const limitItems = 9; // 9 tour / trang
+    let page = parseInt(req.query.page) || 1;
+    if (page < 1) page = 1;
+
     const totalTour = await Tour.countDocuments(find);
+    const totalPage = Math.ceil(totalTour / limitItems) || 1;
+    if (page > totalPage) page = totalPage;
+
+    const skip = (page - 1) * limitItems;
+
+    const pagination = {
+      currentPage: page,
+      skip: skip,
+      totalRecord: totalTour,
+      totalPage: totalPage
+    };
+    // Hết phân trang
 
     const tourList = await Tour
       .find(find)
-      .sort({
-        position: "desc"
-      })
+      .sort({ position: "desc" })
+      .limit(limitItems)
+      .skip(skip);
 
     for(const item of tourList) {
       item.departureDateFormat = moment(item.departureDate).format("DD/MM/YYYY");
@@ -82,7 +99,8 @@ module.exports.list = async (req, res) => {
       category: category,
       tourList: tourList,
       totalTour: totalTour,
-      cityList: cityList
+      cityList: cityList,
+      pagination: pagination
     });
   } else {
     res.redirect("/");

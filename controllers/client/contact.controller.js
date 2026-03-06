@@ -1,4 +1,15 @@
 const Contact = require("../../models/contact.model");
+const SettingWebsiteInfo = require("../../models/setting-website-info.model");
+
+// GET /contact
+module.exports.index = async (req, res) => {
+  const settingWebsiteInfo = await SettingWebsiteInfo.findOne({}); // thường chỉ có 1 record
+
+  res.render("client/pages/contact", {
+    pageTitle: "Liên hệ",
+    settingWebsiteInfo
+  });
+};
 
 module.exports.createPost = async (req, res) => {
   const { email } = req.body;
