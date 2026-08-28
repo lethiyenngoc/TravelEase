@@ -1,0 +1,24 @@
+extends ../layouts/default.pug
+
+block main
+  h1.box-title Khách hàng thân thiết
+
+  .section-6
+    .table-2
+      table
+        thead
+          tr
+            th Họ tên
+            th Số điện thoại
+            th Tổng đơn hoàn thành
+            th Tổng chi tiêu
+            th Xếp loại
+        tbody
+          each item in loyalCustomerList
+            tr
+              td #{item.fullName}
+              td #{item.phone}
+              td #{item.totalOrder}
+              td #{item.totalMoney.toLocaleString("vi-VN")}đ
+              td
+                span.badge.badge-green Khách thân thiết

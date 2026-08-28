@@ -45,6 +45,45 @@ block main
         canvas(id="revenue-chart")
     //- End Section 2
 
+    //- Dashboard Top Tour
+    .dashboard-top-tour
+      .inner-head
+        h2.inner-title Top tour bán chạy
+
+        .inner-filter
+          select(dashboard-filter-category)
+            option(value="") Tất cả danh mục
+            each item in categoryList
+              option(
+                value=item.id
+                selected=(categorySelected == item.id)
+              ) #{item.name}
+
+      if topTourList.length > 0
+        .table-1
+          table
+            thead
+              tr
+                th Tour
+                th(class="inner-center") Lượt đặt
+
+            tbody
+              each item in topTourList
+                tr
+                  td
+                    .inner-tour
+                      .inner-image
+                        img(src=item.avatar alt=item.name)
+
+                      .inner-content
+                        .inner-name #{item.name}
+
+                  td(class="inner-center")
+                    strong #{item.totalQuantity}
+      else
+        .inner-empty Chưa có dữ liệu tour bán chạy
+    //- End Dashboard Top Tour
+
     //- Section 3
     .section-3
       h2.inner-title Đơn hàng mới
@@ -94,5 +133,5 @@ block main
                 .badge.badge-orange Khởi tạo
               td.inner-text-right
                 .inner-text 16:20
-                .inner-text 01/01/2025
+                .inner-text 14/05/2026
     //- End Section 3

@@ -28,6 +28,7 @@ router.patch(
   categoryValidate.createPost,
   categoryController.editPatch
 )
+router.get('/count-tour/:id', categoryController.countTour)
 
 router.patch('/delete/:id', categoryController.deletePatch)
 

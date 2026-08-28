@@ -9,27 +9,25 @@ block main
       .inner-item.inner-label
         <i class="fa-solid fa-filter"></i> Bộ lọc
       .inner-item
-        select
+        select(filter-status)
           option(value="") Trạng thái
-          option(value="") Khởi tạo
-          option(value="") Hoàn thành
-          option(value="") Hủy
+          each item in orderStatus
+            option(value=item.value) #{item.label}
       .inner-item.inner-date
-        input(type="date")
+        input(type="date" filter-start-date)
         span -
-        input(type="date")
+        input(type="date" filter-end-date)
       .inner-item
-        select
+        select(filter-payment-method)
           option(value="") Phương thức thanh toán
-          option(value="") Ví Momo
-          option(value="") VNPay
-          option(value="") ZaloPay
+          each item in paymentMethod
+            option(value=item.value) #{item.label}
       .inner-item
-        select
+        select(filter-payment-status)
           option(value="") Trạng thái thanh toán
-          option(value="") Đã thanh toán
-          option(value="") Chưa thanh toán
-      .inner-item.inner-reset
+          each item in paymentStatus
+            option(value=item.value) #{item.label}
+      .inner-item.inner-reset(filter-reset)
         <i class="fa-solid fa-rotate-left"></i> Xóa bộ lọc
   //- End Section 4
 
@@ -38,7 +36,18 @@ block main
     .inner-wrap
       .inner-search
         <i class="fa-solid fa-magnifying-glass"></i>
-        input(type="text" placeholder="Tìm kiếm")
+        input(type="text" placeholder="Tìm kiếm" search)
+      .inner-button-loyal
+        a(href=`/${pathAdmin}/order/loyal-customer/list`)
+          i(class="fa-solid fa-user-check")
+          |  Khách hàng thân thiết
+
+        .inner-tooltip
+          | Điều kiện:
+          br
+          | Có từ 3 đơn hoàn thành
+          br
+          | hoặc tổng chi tiêu từ 5.000.000đ trở lên
   //- End Section 5
 
   //- Section 6
@@ -96,7 +105,16 @@ block main
                     href=`/${pathAdmin}/order/edit/${orderDetail.id}`
                     class="inner-edit"
                   ) <i class="fa-regular fa-pen-to-square"></i>
-                  button(class="inner-delete") <i class="fa-regular fa-trash-can"></i>
+                  a(
+                    href=`/${pathAdmin}/order/invoice/${orderDetail.id}`
+                    class="inner-print"
+                    target="_blank"
+                  ) <i class="fa-solid fa-print"></i>
+                  button(
+                    class="inner-delete"
+                    button-delete
+                    data-api=`/${pathAdmin}/order/delete/${orderDetail.id}`
+                  ) <i class="fa-regular fa-trash-can"></i>
   //- End Section 6
 
   //- Section 7

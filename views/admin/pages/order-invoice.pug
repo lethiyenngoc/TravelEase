@@ -1,0 +1,110 @@
+extends ../layouts/default.pug
+
+block main
+  .invoice
+    .invoice-top
+      a(
+        href=`/${pathAdmin}/order/list`
+        class="invoice-back"
+      )
+        i(class="fa-solid fa-arrow-left")
+        |  Quay lại
+
+      button(
+        onclick="window.print()"
+        class="invoice-print"
+      )
+        i(class="fa-solid fa-print")
+        |  In / Lưu PDF
+
+    .invoice-paper
+      .invoice-header
+        .invoice-logo
+          img(src="/assets/images/logo.png" alt="logo")
+
+        .invoice-company
+          h2 TRAVEL EASE
+          div Hotline: 09123456789
+          div Email: travelease@gmail.com
+          div Địa chỉ: 72 Lê Thánh Tôn, Quận 1, TP. HCM
+
+      h1 PHIẾU XÁC NHẬN DỊCH VỤ VÀ THANH TOÁN
+
+      .invoice-code
+        | Đơn hàng: 
+        strong #{orderDetail.orderCode}
+
+      .invoice-info
+        .invoice-row
+          span Họ và tên
+          strong #{orderDetail.fullName}
+
+        .invoice-row
+          span Điện thoại
+          strong #{orderDetail.phone}
+
+        .invoice-row
+          span Phương thức thanh toán
+          strong #{orderDetail.paymentMethodName}
+
+        .invoice-row
+          span Trạng thái thanh toán
+          strong #{orderDetail.paymentStatusName}
+
+        .invoice-row
+          span Ngày đặt
+          strong #{orderDetail.createdAtTime} - #{orderDetail.createdAtDate}
+
+      table.invoice-table
+        thead
+          tr
+            th Dịch vụ
+            th SL
+            th Đơn giá
+            th Thành tiền
+
+        tbody
+          each item in orderDetail.items
+            tr
+              td #{item.name} (Người lớn)
+              td #{item.quantityAdult}
+              td #{item.priceNewAdult.toLocaleString("vi-VN")}
+              td #{(item.quantityAdult * item.priceNewAdult).toLocaleString("vi-VN")}
+
+            if item.quantityChildren > 0
+              tr
+                td #{item.name} (Trẻ em)
+                td #{item.quantityChildren}
+                td #{item.priceNewChildren.toLocaleString("vi-VN")}
+                td #{(item.quantityChildren * item.priceNewChildren).toLocaleString("vi-VN")}
+
+            if item.quantityBaby > 0
+              tr
+                td #{item.name} (Em bé)
+                td #{item.quantityBaby}
+                td #{item.priceNewBaby.toLocaleString("vi-VN")}
+                td #{(item.quantityBaby * item.priceNewBaby).toLocaleString("vi-VN")}
+
+          tr.total
+            td(colspan="3") Tạm tính
+            td #{orderDetail.subTotal.toLocaleString("vi-VN")}
+
+          tr.total
+            td(colspan="3") Giảm giá
+            td #{orderDetail.discount.toLocaleString("vi-VN")}
+
+          tr.payment
+            td(colspan="3") Thanh toán
+            td #{orderDetail.total.toLocaleString("vi-VN")}
+
+      .invoice-note
+        p Vé và thông tin xác nhận sẽ được gửi sau khi thanh toán thành công.
+
+      .invoice-sign
+        .sign-item
+          strong KHÁCH HÀNG
+          div
+
+        .sign-item
+          strong NGƯỜI LẬP PHIẾU
+          div

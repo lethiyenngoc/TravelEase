@@ -1,5 +1,6 @@
 const AccountAdmin = require("../../models/account-admin.model");
 const Order = require("../../models/order.model");
+const Category = require("../../models/category.model");
 
 module.exports.dashboard = async (req, res) => {
   // Section 1
@@ -25,9 +26,85 @@ module.exports.dashboard = async (req, res) => {
   }, 0);
   // End Section 1
 
+  // Top tour bán chạy theo danh mục
+  const categoryList = await Category.find({
+  deleted: false,
+  parent: {
+    $ne: ""
+  }
+}).select("id name");
+
+  const categorySelected = req.query.category || "";
+
+  const matchTour = {};
+  if(categorySelected) {
+    matchTour["tourInfo.category"] = categorySelected;
+  }
+
+  const topTourList = await Order.aggregate([
+    {
+      $match: {
+        deleted: false,
+        status: "done",
+        paymentStatus: "paid"
+      }
+    },
+    {
+      $unwind: "$items"
+    },
+    {
+      $lookup: {
+        from: "tours",
+        localField: "items.name",
+        foreignField: "name",
+        as: "tourInfo"
+      }
+    },
+    {
+      $unwind: "$tourInfo"
+    },
+    {
+      $match: matchTour
+    },
+    {
+      $group: {
+        _id: "$items.name",
+        name: { $first: "$items.name" },
+        avatar: { $first: "$items.avatar" },
+        totalQuantity: {
+          $sum: {
+            $add: [
+              "$items.quantityAdult",
+              "$items.quantityChildren",
+              "$items.quantityBaby"
+            ]
+          }
+        }
+      }
+    },
+    {
+      $match: {
+        totalQuantity: {
+          $gte: 2
+        }
+      }
+    },
+    {
+      $sort: {
+        totalQuantity: -1
+      }
+    },
+    {
+      $limit: 5
+    }
+  ])
+
   res.render("admin/pages/dashboard", {
     pageTitle: "Tổng quan",
-    overview: overview
+    overview: overview,
+    topTourList: topTourList,
+    categoryList: categoryList,
+    categorySelected: categorySelected
   })
 }
 

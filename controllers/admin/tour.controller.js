@@ -1,4 +1,5 @@
 const moment = require("moment");
+const slugify = require("slugify");
 const Category = require("../../models/category.model");
 const City = require("../../models/city.model");
 const Tour = require("../../models/tour.model");
@@ -11,6 +12,60 @@ module.exports.list = async (req, res) => {
     deleted: false
   };
 
+  // Lọc trạng thái
+  if(req.query.status) {
+    find.status = req.query.status;
+  }
+
+  // Lọc người tạo
+  if(req.query.createdBy) {
+    find.createdBy = req.query.createdBy;
+  }
+
+  // Lọc danh mục
+  if(req.query.category) {
+    find.category = req.query.category;
+  }
+
+  // Lọc ngày tạo
+  const dateFilter = {};
+
+  if(req.query.startDate) {
+    dateFilter.$gte = moment(req.query.startDate).startOf("date").toDate();
+  }
+
+  if(req.query.endDate) {
+    dateFilter.$lte = moment(req.query.endDate).endOf("date").toDate();
+  }
+
+  if(Object.keys(dateFilter).length > 0) {
+    find.createdAt = dateFilter;
+  }
+
+  // Lọc mức giá
+  if(req.query.price) {
+    const price = req.query.price.split("-");
+
+    if(price.length == 2) {
+      find.priceNewAdult = {
+        $gte: parseInt(price[0]),
+        $lte: parseInt(price[1])
+      };
+    } else {
+      find.priceNewAdult = {
+        $gte: parseInt(price[0])
+      };
+    }
+  }
+
+  // Tìm kiếm
+  if(req.query.keyword) {
+    const keyword = slugify(req.query.keyword, {
+      lower: true
+    });
+
+    find.slug = new RegExp(keyword);
+  }
   // Phân trang
   const limitItems = 5; // số tour / trang
   let page = 1;
@@ -23,7 +78,7 @@ module.exports.list = async (req, res) => {
   }
 
   const totalRecord = await Tour.countDocuments(find);
-  const totalPage = Math.ceil(totalRecord / limitItems);
+  const totalPage = Math.ceil(totalRecord / limitItems) || 1;
 
   if (page > totalPage) {
     page = totalPage;
@@ -64,10 +119,25 @@ module.exports.list = async (req, res) => {
     item.createdAtFormat = moment(item.createdAt).format("HH:mm - DD/MM/YYYY");
     item.updatedAtFormat = moment(item.updatedAt).format("HH:mm - DD/MM/YYYY");
   }
+  
+  const categoryList = await Category
+  .find({
+    deleted: false,
+    parent: {
+      $ne: ""
+    }
+  })
+  .select("id name");
+
+  const accountAdminList = await AccountAdmin
+    .find({})
+    .select("id fullName");
 
     res.render("admin/pages/tour-list", {
       pageTitle: "Quản lý tour",
-      tourList: tourList ,
+      tourList: tourList,
+      categoryList: categoryList,
+      accountAdminList: accountAdminList,
       pagination: pagination
     })
   }
@@ -405,4 +475,60 @@ module.exports.list = async (req, res) => {
         message: "Id không tồn tại trong hệ thông!"
       })
     }
-  }  
+  }
+
+  module.exports.changeMultiPatch = async (req, res) => {
+  try {
+    const { option, ids } = req.body;
+
+    switch (option) {
+      case "active":
+      case "inactive":
+        if(!req.permissions.includes("tour-edit")) {
+          res.json({
+            code: "error",
+            message: "Không có quyền sử dụng tính năng này!"
+          });
+          return;
+        }
+
+        await Tour.updateMany(
+          { _id: { $in: ids } },
+          { status: option }
+        )
+
+        req.flash("success", "Đổi trạng thái thành công!");
+        break;
+
+      case "delete":
+        if(!req.permissions.includes("tour-delete")) {
+          res.json({
+            code: "error",
+            message: "Không có quyền sử dụng tính năng này!"
+          })
+          return;
+        }
+
+        await Tour.updateMany(
+          { _id: { $in: ids } },
+          {
+            deleted: true,
+            deletedBy: req.account.id,
+            deletedAt: Date.now()
+          }
+        )
+
+        req.flash("success", "Xóa tour thành công!");
+        break;
+    }
+
+    res.json({
+      code: "success"
+    })
+  } catch (error) {
+    res.json({
+      code: "error",
+      message: "Thao tác thất bại!"
+    })
+  }
+}

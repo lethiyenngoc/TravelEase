@@ -91,7 +91,8 @@ block main
                   ) <i class="fa-regular fa-pen-to-square"></i>
                   button(
                     class="inner-delete"
-                    button-delete
+                    button-delete-category
+                    data-api-count-tour=`/${pathAdmin}/category/count-tour/${item.id}`
                     data-api=`/${pathAdmin}/category/delete/${item.id}`
                   ) <i class="fa-regular fa-trash-can"></i>
   //- End Section 6

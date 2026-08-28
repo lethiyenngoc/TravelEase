@@ -1301,6 +1301,44 @@ if(listButtonDelete.length > 0) {
 }
 // End Button Delete
 
+// Button Delete Category
+const listButtonDeleteCategory = document.querySelectorAll("[button-delete-category]");
+
+if(listButtonDeleteCategory.length > 0) {
+  listButtonDeleteCategory.forEach(button => {
+    button.addEventListener("click", async () => {
+      const apiCountTour = button.getAttribute("data-api-count-tour");
+      const apiDelete = button.getAttribute("data-api");
+
+      const response = await fetch(apiCountTour);
+      const result = await response.json();
+
+      if(result.code == "success") {
+        const isConfirm = confirm(`Danh mục này hiện có ${result.totalTour} tour. Bạn có chắc muốn xóa không?`);
+
+        if(isConfirm) {
+          const responseDelete = await fetch(apiDelete, {
+            method: "PATCH"
+          });
+
+          const resultDelete = await responseDelete.json();
+
+          if(resultDelete.code == "error") {
+            alert(resultDelete.message);
+          }
+
+          if(resultDelete.code == "success") {
+            window.location.reload();
+          }
+        }
+      } else {
+        alert(result.message);
+      }
+    })
+  })
+}
+// End Button Delete Category
+
 // Filter Status
 const filterStatus = document.querySelector("[filter-status]");
 if(filterStatus) {
@@ -1400,6 +1438,102 @@ if(filterEndDate) {
   }
 }
 // End Filter End Date
+
+// Filter Payment Method
+const filterPaymentMethod = document.querySelector("[filter-payment-method]");
+if(filterPaymentMethod) {
+  const url = new URL(window.location.href);
+
+  filterPaymentMethod.addEventListener("change", () => {
+    const value = filterPaymentMethod.value;
+
+    if(value) {
+      url.searchParams.set("paymentMethod", value);
+    } else {
+      url.searchParams.delete("paymentMethod");
+    }
+
+    window.location.href = url.href;
+  })
+
+  const valueCurrent = url.searchParams.get("paymentMethod");
+  if(valueCurrent) {
+    filterPaymentMethod.value = valueCurrent;
+  }
+}
+// End Filter Payment Method
+
+// Filter Payment Status
+const filterPaymentStatus = document.querySelector("[filter-payment-status]");
+if(filterPaymentStatus) {
+  const url = new URL(window.location.href);
+
+  filterPaymentStatus.addEventListener("change", () => {
+    const value = filterPaymentStatus.value;
+
+    if(value) {
+      url.searchParams.set("paymentStatus", value);
+    } else {
+      url.searchParams.delete("paymentStatus");
+    }
+
+    window.location.href = url.href;
+  })
+
+  const valueCurrent = url.searchParams.get("paymentStatus");
+  if(valueCurrent) {
+    filterPaymentStatus.value = valueCurrent;
+  }
+}
+// End Filter Payment Status
+
+// Filter Category
+const filterCategory = document.querySelector("[filter-category]");
+if(filterCategory) {
+  const url = new URL(window.location.href);
+
+  filterCategory.addEventListener("change", () => {
+    const value = filterCategory.value;
+
+    if(value) {
+      url.searchParams.set("category", value);
+    } else {
+      url.searchParams.delete("category");
+    }
+
+    window.location.href = url.href;
+  })
+
+  const valueCurrent = url.searchParams.get("category");
+  if(valueCurrent) {
+    filterCategory.value = valueCurrent;
+  }
+}
+// End Filter Category
+
+// Filter Price
+const filterPrice = document.querySelector("[filter-price]");
+if(filterPrice) {
+  const url = new URL(window.location.href);
+
+  filterPrice.addEventListener("change", () => {
+    const value = filterPrice.value;
+
+    if(value) {
+      url.searchParams.set("price", value);
+    } else {
+      url.searchParams.delete("price");
+    }
+
+    window.location.href = url.href;
+  })
+
+  const valueCurrent = url.searchParams.get("price");
+  if(valueCurrent) {
+    filterPrice.value = valueCurrent;
+  }
+}
+// End Filter Price
 
 // Filter Reset
 const filterReset = document.querySelector("[filter-reset]");
@@ -1522,3 +1656,22 @@ if(pagination) {
   }
 }
 // End Filter Status
+
+// Dashboard Filter Category Top Tour
+const dashboardFilterCategory = document.querySelector("[dashboard-filter-category]");
+if(dashboardFilterCategory) {
+  const url = new URL(window.location.href);
+
+  dashboardFilterCategory.addEventListener("change", () => {
+    const value = dashboardFilterCategory.value;
+
+    if(value) {
+      url.searchParams.set("category", value);
+    } else {
+      url.searchParams.delete("category");
+    }
+
+    window.location.href = url.href;
+  })
+}
+// End Dashboard Filter Category Top Tour

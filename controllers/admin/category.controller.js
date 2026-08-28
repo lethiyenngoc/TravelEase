@@ -1,6 +1,7 @@
 const moment = require("moment");
 const slugify = require('slugify');
 const Category = require("../../models/category.model")
+const Tour = require("../../models/tour.model")
 const AccountAdmin = require("../../models/account-admin.model")
 
 const categoryHelper = require("../../helpers/category.helper");
@@ -229,6 +230,27 @@ module.exports.list = async (req, res) => {
       res.json({
         code: "error",
         message: "Id không hợp lệ!"
+      })
+    }
+  }
+
+  module.exports.countTour = async (req, res) => {
+    try {
+      const id = req.params.id;
+
+      const totalTour = await Tour.countDocuments({
+        category: id,
+        deleted: false
+      })
+
+      res.json({
+        code: "success",
+        totalTour: totalTour
+      })
+    } catch (error) {
+      res.json({
+        code: "error",
+        message: "Danh mục không hợp lệ!"
       })
     }
   }
