@@ -1,10 +1,10 @@
-# TravelEase – Tour Booking Management System
+# TravelEase - Tour Booking Management System
 
-TravelEase is a web-based tour booking and management system built with Node.js, Express.js, MongoDB, and Pug.
+TravelEase is a web-based **Tour Booking and Management System** built with **Node.js, Express.js, MongoDB, and Pug**.
 
 The system provides a customer-facing website for searching and booking tours, along with an administration portal for managing tours, orders, customers, administrator accounts, permissions, and business statistics.
 
-This application is also used as the **System Under Test (SUT)** for the [TravelEase-QA](https://github.com/lethiyenngoc/TravelEase-QA) testing portfolio.
+This application also serves as the **System Under Test (SUT)** for the [TravelEase-QA](https://github.com/lethiyenngoc/TravelEase-QA) testing portfolio.
 
 ---
 
@@ -85,7 +85,7 @@ This application is also used as the **System Under Test (SUT)** for the [Travel
 
 ## Architecture
 
-The application follows the **Model–View–Controller (MVC)** architecture.
+The application follows the **Model-View-Controller (MVC)** architecture.
 
 ```text
 Client
@@ -101,12 +101,17 @@ Models / Mongoose
    |
    v
 MongoDB
+
+Controllers
    |
    v
 Pug Views
+   |
+   v
+Client
 ```
 
-The separation between Models, Views, and Controllers helps organize business logic, data access, and user interfaces independently.
+The separation between Models, Views, and Controllers helps organize business logic, data access, routing, and user interfaces independently.
 
 ---
 
@@ -114,31 +119,41 @@ The separation between Models, Views, and Controllers helps organize business lo
 
 ```text
 TravelEase/
-├── config/
-├── controllers/
-│   ├── admin/
-│   └── client/
-├── helpers/
-├── middlewares/
-│   ├── admin/
-│   └── client/
-├── models/
-├── public/
-│   ├── admin/
-│   └── assets/
-├── routes/
-│   ├── admin/
-│   └── client/
-├── validates/
-│   └── admin/
-├── views/
-│   ├── admin/
-│   └── client/
-├── index.js
-├── package.json
-├── yarn.lock
-├── .env.example
-└── README.md
+|
+|-- config/
+|
+|-- controllers/
+|   |-- admin/
+|   `-- client/
+|
+|-- helpers/
+|
+|-- middlewares/
+|   |-- admin/
+|   `-- client/
+|
+|-- models/
+|
+|-- public/
+|   |-- admin/
+|   `-- assets/
+|
+|-- routes/
+|   |-- admin/
+|   `-- client/
+|
+|-- validates/
+|   `-- admin/
+|
+|-- views/
+|   |-- admin/
+|   `-- client/
+|
+|-- index.js
+|-- package.json
+|-- yarn.lock
+|-- .env.example
+`-- README.md
 ```
 
 > `node_modules/` and `.env` are local files and are not included in the public project structure.
@@ -196,40 +211,74 @@ http://localhost:3000
 
 ## QA & Testing
 
-TravelEase is used as a practical **System Under Test (SUT)** for a separate QA portfolio project.
+TravelEase serves as the **System Under Test (SUT)** for a separate end-to-end QA portfolio project.
 
 ### TravelEase-QA
 
 **Repository:** [TravelEase-QA](https://github.com/lethiyenngoc/TravelEase-QA)
 
-The QA project demonstrates an end-to-end testing workflow including:
+The QA project covers **Manual Testing, API Testing, and Web UI Automation**.
 
-- Test Scenario Design
-- Manual Test Cases
+### Testing Summary
+
+| Testing Type | Executed | Passed | Failed | Blocked | Pass Rate |
+|---|---:|---:|---:|---:|---:|
+| Manual Functional Testing | 69 | 66 | 3 | 0 | 95.7% |
+| API Testing | 48 | 39 | 9 | 0 | 81.25% |
+| Automation Regression | 8 | 8 | 0 | 0 | 100% |
+
+Additional QA activities include:
+
+- Smoke Testing
+- Test Scenario and Test Case Design
 - Test Execution
 - Bug Reporting
-- Smoke Testing
 - API Testing with Postman
-- Selenium Web UI Automation
+- Selenium Web UI Automation with Java
 - TestNG Regression Testing
 - Page Object Model (POM)
 - Maven
 - Allure Reporting
 - Automatic Failure Screenshot Capture
 - Known Defect Reproduction
-- Role-Based Access Control Testing
+- Role-Based Access Control (RBAC) Testing
 
-The application source code and QA project are maintained in separate repositories so that the application implementation and testing approach can be reviewed independently.
+Detailed test cases, execution results, defect reports, Postman files, automation source code, and test evidence are maintained in the separate QA repository.
+
+---
+
+## Relationship Between Repositories
+
+The project is separated into two repositories:
+
+```text
+TravelEase
+    |
+    |-- Node.js / Express / MongoDB
+    |-- Web Application
+    |-- System Under Test (SUT)
+    |
+    `---- tested by ----> TravelEase-QA
+                          |
+                          |-- Manual Testing
+                          |-- API Testing / Postman
+                          |-- Java / Selenium WebDriver
+                          |-- TestNG / Maven
+                          |-- Page Object Model
+                          `-- Allure Report
+```
+
+This separation allows the application implementation and QA testing approach to be reviewed independently.
 
 ---
 
 ## Deployment
 
-The application was designed for deployment using:
+The application was designed to support deployment using:
 
-- **Render** – Node.js application hosting
-- **MongoDB Atlas** – Cloud database
-- **Cloudinary** – Media storage
+- **Render** - Node.js application hosting
+- **MongoDB Atlas** - Cloud database
+- **Cloudinary** - Media storage
 
 Environment-specific configuration is separated from the application source code using environment variables.
 
@@ -240,7 +289,7 @@ Environment-specific configuration is separated from the application source code
 TravelEase was developed to apply software development concepts including:
 
 - System analysis and design
-- Client–Server architecture
+- Client-Server architecture
 - MVC architecture
 - MongoDB database design
 - Authentication and authorization
@@ -256,6 +305,6 @@ The project also serves as the application under test for a practical QA portfol
 
 ## Related Repository
 
-For the complete testing portfolio of this application:
+For the complete QA testing portfolio:
 
-### [TravelEase-QA – Manual, API & Automation Testing](https://github.com/lethiyenngoc/TravelEase-QA)
+### [TravelEase-QA - Manual, API & Automation Testing](https://github.com/lethiyenngoc/TravelEase-QA)
